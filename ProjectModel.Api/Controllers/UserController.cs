@@ -2,7 +2,6 @@
 
 using Microsoft.AspNetCore.Mvc;
 
-using ProjectModel.Application.Commands;
 using ProjectModel.Application.Commands.User;
 
 namespace ProjectModel.Api.Controllers

@@ -2,7 +2,7 @@
 
 namespace ProjectModel.Application.Commands.User
 {
-    public class UserDeleteCommand : IRequest
+    public class UserDeleteCommand : IRequest<Unit>
     {
         public int Id { get; set; }
     }

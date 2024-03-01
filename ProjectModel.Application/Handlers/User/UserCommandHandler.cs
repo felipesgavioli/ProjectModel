@@ -1,6 +1,7 @@
 ﻿using MediatR;
 
 using ProjectModel.Application.Commands.User;
+using ProjectModel.Infrastructure.Data;
 using ProjectModel.Infrastructure.Interfaces;
 
 namespace ProjectModel.Application.Handlers.User
@@ -11,40 +12,53 @@ namespace ProjectModel.Application.Handlers.User
         IRequestHandler<UserDeleteCommand, Unit>
     {
         private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UserCommandHandler(IUserRepository userRepository)
+        public UserCommandHandler(IUserRepository userRepository, IUnitOfWork unitOfWork)
         {
             _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<int> Handle(UserCreateCommand request, CancellationToken cancellationToken)
         {
-            var newUser = new Domain.User
-            {
-                Name = request.Name,
-                Email = request.Email,
-                Password = request.Password,
-            };
-            var result = await _userRepository.Create(newUser);
-            return result.Id;
+            var newUser = request.FromDto();
+
+            var id = await _userRepository.Create(newUser);
+            await _unitOfWork.Commit();
+
+            return id;
         }
 
         public async Task<Unit> Handle(UserUpdateCommand request, CancellationToken cancellationToken)
         {
-            var updateUser = new Domain.User
+
+            var existingUser = await _userRepository.GetById(request.Id);
+            if (existingUser == null)
             {
-                Id = request.Id,
-                Name = request.Name,
-                Email = request.Email,
-                Password = request.Password,
-            };
-            await _userRepository.Update(updateUser);
+                throw new Exception($"O usuário com o ID {request.Id} não foi encontrado.");
+            }
+
+            existingUser = request.FromDto();
+
+            await _userRepository.Update(existingUser);
+            await _unitOfWork.Commit();
+
             return Unit.Value;
         }
+        
 
         public async Task<Unit> Handle(UserDeleteCommand request, CancellationToken cancellationToken)
         {
+            var existingUser = await _userRepository.GetById(request.Id);
+            if (existingUser == null)
+            {
+                throw new Exception($"O usuário com o ID {request.Id} não foi encontrado.");
+            }
+
             await _userRepository.Delete(request.Id);
+            await _unitOfWork.Commit();
+
             return Unit.Value;
         }
     }

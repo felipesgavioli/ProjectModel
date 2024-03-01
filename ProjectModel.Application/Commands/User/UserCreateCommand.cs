@@ -1,7 +1,5 @@
 ﻿using MediatR;
 
-using ProjectModel.Domain;
-
 namespace ProjectModel.Application.Commands.User
 {
     public class UserCreateCommand : IRequest<int>
@@ -9,5 +7,15 @@ namespace ProjectModel.Application.Commands.User
         public string Name { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
+
+        public Domain.User FromDto()
+        {
+            return new Domain.User
+            {
+                Name = Name,
+                Email = Email,
+                Password = Password
+            };
+        }
     }
 }
