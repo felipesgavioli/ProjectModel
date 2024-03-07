@@ -1,9 +1,12 @@
 ﻿using MediatR;
-
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.Extensions.Localization;
 using ProjectModel.Application.Commands.User;
 using ProjectModel.Application.Queries.User;
+using ProjectModel.Infrastructure.Resources;
+using System.Globalization;
+using System.Resources;
 
 namespace ProjectModel.Api.Controllers
 {
@@ -12,10 +15,12 @@ namespace ProjectModel.Api.Controllers
     public class UserController : Controller
     {
         private readonly IMediator _mediator;
+        private readonly IResources _resources;
 
-        public UserController(IMediator mediator)
+        public UserController(IMediator mediator, IResources resources)
         {
             _mediator = mediator;
+            _resources = resources;
         }
 
         [HttpGet("{id}")]
@@ -26,7 +31,7 @@ namespace ProjectModel.Api.Controllers
 
             if (user == null)
             {
-                return NotFound($"Usuário com ID {id} não encontrado.");
+                return NotFound(_resources.UserIDNotFound());
             }
 
             return Ok(user);
@@ -35,6 +40,8 @@ namespace ProjectModel.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] UserCreateCommand command)
         {
+            var test = _resources.UserIDNotFound(1);
+
             var user = await _mediator.Send(command);
             return CreatedAtAction(nameof(Create), user);
         }
