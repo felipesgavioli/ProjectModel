@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace ProjectModel.Infrastructure.Data
 {
@@ -17,7 +11,7 @@ namespace ProjectModel.Infrastructure.Data
             _context = context;
         }
 
-        public async Task<int> Commit()
+        public async Task<int> CommitAsync()
         {
             try
             {

@@ -3,6 +3,7 @@
 using Microsoft.AspNetCore.Mvc;
 
 using ProjectModel.Application.Commands.User;
+using ProjectModel.Application.Queries.User;
 
 namespace ProjectModel.Api.Controllers
 {
@@ -17,18 +18,25 @@ namespace ProjectModel.Api.Controllers
             _mediator = mediator;
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var query = new GetUserByIdQuery(id);
+            var user = await _mediator.Send(query);
+
+            if (user == null)
+            {
+                return NotFound($"Usuário com ID {id} não encontrado.");
+            }
+
+            return Ok(user);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] UserCreateCommand command)
         {
-            try
-            {
-                var user = await _mediator.Send(command);
-                return CreatedAtAction(nameof(Create), user);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Erro ao criar usuário: {ex.Message}");
-            }
+            var user = await _mediator.Send(command);
+            return CreatedAtAction(nameof(Create), user);
         }
 
         [HttpPut("{id}")]
@@ -39,32 +47,16 @@ namespace ProjectModel.Api.Controllers
                 return BadRequest("O ID do usuário na URL não corresponde ao ID do usuário no corpo da solicitação.");
             }
 
-            try
-            {
-                await _mediator.Send(command);
-                return NoContent(); // Retorna 204 No Content se a atualização for bem-sucedida
-            }
-            catch (Exception ex)
-            {
-                // Trate o erro de acordo com as suas necessidades
-                return StatusCode(500, $"Erro ao atualizar usuário: {ex.Message}");
-            }
+            await _mediator.Send(command);
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            try
-            {
-                var command = new UserDeleteCommand { Id = id };
-                await _mediator.Send(command);
-                return NoContent(); // Retorna 204 No Content se a exclusão for bem-sucedida
-            }
-            catch (Exception ex)
-            {
-                // Trate o erro de acordo com as suas necessidades
-                return StatusCode(500, $"Erro ao excluir usuário: {ex.Message}");
-            }
+            var command = new UserDeleteCommand { Id = id };
+            await _mediator.Send(command);
+            return NoContent();
         }
     }
 }

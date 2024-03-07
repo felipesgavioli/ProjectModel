@@ -23,16 +23,14 @@ namespace ProjectModel.Application.Handlers.User
         public async Task<int> Handle(UserCreateCommand request, CancellationToken cancellationToken)
         {
             var newUser = request.FromDto();
-
             var id = await _userRepository.Create(newUser);
-            await _unitOfWork.Commit();
+            await _unitOfWork.CommitAsync();
 
             return id;
         }
 
         public async Task<Unit> Handle(UserUpdateCommand request, CancellationToken cancellationToken)
         {
-
             var existingUser = await _userRepository.GetById(request.Id);
             if (existingUser == null)
             {
@@ -42,11 +40,10 @@ namespace ProjectModel.Application.Handlers.User
             existingUser = request.FromDto();
 
             await _userRepository.Update(existingUser);
-            await _unitOfWork.Commit();
+            await _unitOfWork.CommitAsync();
 
             return Unit.Value;
         }
-        
 
         public async Task<Unit> Handle(UserDeleteCommand request, CancellationToken cancellationToken)
         {
@@ -57,7 +54,7 @@ namespace ProjectModel.Application.Handlers.User
             }
 
             await _userRepository.Delete(request.Id);
-            await _unitOfWork.Commit();
+            await _unitOfWork.CommitAsync();
 
             return Unit.Value;
         }

@@ -10,12 +10,7 @@ namespace ProjectModel.Application.Commands.User
 
         public Domain.User FromDto()
         {
-            return new Domain.User
-            {
-                Name = Name,
-                Email = Email,
-                Password = Password
-            };
+            return new Domain.User(Name, Email, Password);
         }
     }
 }

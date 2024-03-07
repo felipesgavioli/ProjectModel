@@ -1,13 +1,12 @@
-using System.Reflection;
-
 using MediatR;
-
 using Microsoft.EntityFrameworkCore;
+using ProjectModel.Api.Configurations;
 using ProjectModel.Application.Commands.User;
 using ProjectModel.Application.Handlers.User;
 using ProjectModel.Infrastructure.Data;
 using ProjectModel.Infrastructure.Interfaces;
 using ProjectModel.Infrastructure.Repositories;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
 
 // DI Repository
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // DI Handlers
@@ -41,9 +41,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseExceptionHandler("/error");
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.MapControllers();
 

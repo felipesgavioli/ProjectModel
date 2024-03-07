@@ -27,7 +27,7 @@ namespace ProjectModel.Infrastructure.Repositories
 
         public async Task<List<User>> GetAll()
         {
-            return await _context.Users.ToListAsync();
+            return await _context.Users.AsTracking().ToListAsync();
         }
 
         public async Task<int> Create(User user)
