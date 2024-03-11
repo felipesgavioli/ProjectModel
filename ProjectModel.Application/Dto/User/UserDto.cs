@@ -2,16 +2,8 @@
 
 namespace ProjectModel.Application.Dto.User
 {
-    public class UserDto
+    public record class UserDto
     {
-        public UserDto(int id, string name, string email, string password)
-        {
-            Id = id;
-            Name = name;
-            Email = email;
-            Password = password;
-        }
-
         [JsonPropertyName("id")]
         public int Id { get; set; }
 
@@ -24,22 +16,20 @@ namespace ProjectModel.Application.Dto.User
         [JsonPropertyName("password")]
         public string Password { get; set; }
 
-        public static UserDto MapFromDomain(Domain.User entity)
-        {
-            var customerViewModel = new UserDto(
-                entity.Id,
-                entity.Name,
-                entity.Email,
-                entity.Password
-            );
-            return customerViewModel;
-        }
-
-        public static IEnumerable<UserDto> MapFromDomain(IList<Domain.User> entity)
-        {
-            foreach (var item in entity)
+        public static UserDto FromDomain(Domain.User entity) =>
+            new UserDto
             {
-                yield return MapFromDomain(item);
+                Id = entity.Id,
+                Name = entity.Name,
+                Email = entity.Email,
+                Password = entity.Password
+            };
+
+        public static IEnumerable<UserDto> FromDomain(IEnumerable<Domain.User> users)
+        {
+            foreach (var user in users)
+            {
+                yield return FromDomain(user);
             }
         }
     }

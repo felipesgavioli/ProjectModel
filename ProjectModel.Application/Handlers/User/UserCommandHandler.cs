@@ -38,7 +38,6 @@ namespace ProjectModel.Application.Handlers.User
             }
 
             existingUser = request.FromDto();
-
             await _userRepository.Update(existingUser);
             await _unitOfWork.CommitAsync();
 

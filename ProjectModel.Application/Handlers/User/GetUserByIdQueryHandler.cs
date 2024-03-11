@@ -21,7 +21,7 @@ namespace ProjectModel.Application.Handlers.User
             if (user == null)
                 return null;
 
-            return UserDto.MapFromDomain(user);
+            return UserDto.FromDomain(user);
         }
     }
 }

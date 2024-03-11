@@ -1,12 +1,8 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using ProjectModel.Application.Commands.User;
 using ProjectModel.Application.Queries.User;
 using ProjectModel.Infrastructure.Resources;
-using System.Globalization;
-using System.Resources;
 
 namespace ProjectModel.Api.Controllers
 {
@@ -21,6 +17,20 @@ namespace ProjectModel.Api.Controllers
         {
             _mediator = mediator;
             _resources = resources;
+        }
+
+        [HttpGet()]
+        public async Task<IActionResult> GetAll()
+        {
+            var query = new GetAllUsersQuery();
+            var users = await _mediator.Send(query);
+
+            if (users == null)
+            {
+                return NotFound(_resources.UserIDNotFound());
+            }
+
+            return Ok(users);
         }
 
         [HttpGet("{id}")]

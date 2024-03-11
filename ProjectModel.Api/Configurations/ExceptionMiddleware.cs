@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using ProjectModel.Api.Model;
+﻿using ProjectModel.Api.Model;
 using ProjectModel.Infrastructure.Resources;
 using System.Net;
 
@@ -58,7 +57,7 @@ namespace ProjectModel.Api.Configurations
                 {
                     StatusCode = (int)HttpStatusCode.BadRequest,
                     Message = _resources.InternalServerError
-                }; 
+                };
             }
             else
             {
